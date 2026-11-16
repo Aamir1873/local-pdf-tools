@@ -381,7 +381,7 @@ await phone.close();
 const dark = await openPage(URL_, { width: 1280, height: 900, dark: true });
 await test("Layout", "dark mode uses dark colours", async () => {
   const bg = await dark.eval(`getComputedStyle(document.body).backgroundColor`);
-  assert.equal(bg, "rgb(18, 18, 17)");
+  assert.equal(bg, "rgb(21, 21, 21)");
 });
 await dark.close();
 

@@ -19,9 +19,11 @@ There's nothing to install and no account to make.
 ## What it can do
 
 - **Merge**: join several PDFs into one, in the order you choose.
-- **Split**: take out the pages you need, or cut a PDF into parts.
-- **Pages**: move, turn or delete pages, with a preview of each one.
-- **Images to PDF**: turn photos or scans into a PDF.
+- **Split**: keep only the pages you need, save every page as its own PDF, or cut a PDF into equal or custom parts.
+- **Pages**: drag pages into a new order, turn them or remove them, with a preview of each page. Each page shows where it was before, so you can see your changes.
+- **Images to PDF**: turn photos or scans into a PDF, one page per image.
+
+After each job, a short animation shows what happened: the files joining into one, a PDF splitting into parts, or the pages moving into their new order. It follows your computer's light or dark setting, and the animations switch off if you've turned motion off.
 
 ![Moving and turning pages](docs/screenshots/pages.png)
 

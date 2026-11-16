@@ -31,7 +31,7 @@
   function updateNet() {
     const off = !navigator.onLine;
     $("#net").classList.toggle("is-off", off);
-    $("#net-text").textContent = off ? "Offline · still works · nothing is uploaded" : "Runs on your device · nothing is uploaded";
+    $("#net-text").textContent = off ? "You're offline. It still works." : "Offline. Nothing is uploaded.";
   }
   addEventListener("online", updateNet);
   addEventListener("offline", updateNet);
@@ -122,6 +122,101 @@
 
   const pageWord = (n) => `${n} page${n === 1 ? "" : "s"}`;
   const pad = (n, count) => String(n).padStart(String(count).length, "0");
+
+  // ---------- Motion: only to show what changed (respects "reduce motion")
+  const calm = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const EASE = "cubic-bezier(.22,.9,.3,1)";
+  const FX_COLORS = ["var(--fx-a)", "var(--fx-b)", "var(--fx-c)", "var(--fx-d)"];
+
+  // Remember where keyed items were, redraw, then slide each one from its old place (FLIP).
+  function flip(container, draw) {
+    const before = new Map();
+    if (!calm()) for (const el of container.children) if (el.dataset.key) before.set(el.dataset.key, el.getBoundingClientRect());
+    draw();
+    if (calm()) return;
+    for (const el of container.children) {
+      const was = before.get(el.dataset.key);
+      if (!el.dataset.key) continue;
+      if (!was) {
+        if (before.size || container.children.length === 1) el.animate([{ opacity: 0, transform: "translateY(10px) scale(.97)" }, { opacity: 1, transform: "none" }], { duration: 320, easing: EASE });
+        continue;
+      }
+      const now = el.getBoundingClientRect();
+      const dx = was.left - now.left, dy = was.top - now.top;
+      if (dx || dy) el.animate([{ transform: `translate(${dx}px, ${dy}px)` }, { transform: "none" }], { duration: 340, easing: EASE });
+    }
+  }
+
+  // A short scene in the tool's panel that shows the result: files joining, a file splitting, pages reordering.
+  function sheet(color, extra = "", label = "") {
+    const el = h("div", { class: "fx-sheet " + extra, style: `--c:${color}` }, h("i"), h("i"), h("i"));
+    if (label) el.append(h("b", { text: label }));
+    return el;
+  }
+  function stage(panel) {
+    let fx = panel.querySelector(".fx");
+    if (fx) fx.remove();
+    fx = h("div", { class: "fx", "aria-hidden": "true" });
+    panel.querySelector(".actions")?.after(fx) ?? panel.append(fx);
+    return fx;
+  }
+  function doneLine(fx, text, delay) {
+    const d = h("div", { class: "fx-done" }, h("span", { text: "✓ " }), text);
+    fx.append(d);
+    d.animate([{ opacity: 0, transform: "translateY(6px)" }, { opacity: 1, transform: "none" }], { duration: 300, delay, easing: EASE, fill: "both" });
+  }
+  const spread = (i, n, gap) => (i - (n - 1) / 2) * gap;
+  function showMerge(panel, count, pages) {
+    if (calm()) return;
+    const fx = stage(panel), n = Math.min(count, 5);
+    const parts = Array.from({ length: n }, (_, i) => fx.appendChild(sheet(FX_COLORS[i % 4])));
+    const out = fx.appendChild(sheet("var(--fx-b)", "", pageWord(pages)));
+    parts.forEach((el, i) => {
+      const x = spread(i, n, 74), r = (i - (n - 1) / 2) * 5;
+      el.animate([{ transform: `translate(${x}px,-12px) rotate(${r}deg)` }, { transform: `translate(${x}px,-12px) rotate(${r}deg)`, offset: .25 }, { transform: "translate(0,-12px)", opacity: 1, offset: .75 }, { transform: "translate(0,-12px)", opacity: 0 }], { duration: 1300, easing: EASE, fill: "forwards" });
+    });
+    out.animate([{ opacity: 0, transform: "translate(0,-12px) scale(.9)" }, { opacity: 1, transform: "translate(0,-12px) scale(1.06)", offset: .7 }, { opacity: 1, transform: "translate(0,-12px)" }], { duration: 520, delay: 950, easing: EASE, fill: "both" });
+    doneLine(fx, "Joined into one PDF and saved to Downloads", 1300);
+  }
+  function showSplit(panel, parts, label) {
+    if (calm()) return;
+    const fx = stage(panel), n = Math.min(parts, 6);
+    const src = fx.appendChild(sheet("var(--fx-a)"));
+    src.animate([{ transform: "translate(0,-12px)", opacity: 1 }, { transform: "translate(0,-12px) scale(1.04)", opacity: 1, offset: .5 }, { transform: "translate(0,-12px)", opacity: 0 }], { duration: 650, easing: EASE, fill: "forwards" });
+    for (let i = 0; i < n; i++) {
+      const el = fx.appendChild(sheet(FX_COLORS[i % 4], "small"));
+      const x = spread(i, n, 56);
+      el.animate([{ opacity: 0, transform: "translate(0,-12px) rotate(0)" }, { opacity: 1, transform: `translate(${x}px,-12px) rotate(${(i - (n - 1) / 2) * 4}deg)` }], { duration: 650, delay: 450 + i * 60, easing: EASE, fill: "both" });
+    }
+    doneLine(fx, label, 900 + n * 60);
+  }
+  function showPages(panel, order) {
+    if (calm()) return;
+    const fx = stage(panel), list = order.slice(0, 10), kept = list.filter((o) => !o.del);
+    const gap = 60, before = [...list].sort((a, b) => a.src - b.src);
+    before.forEach((o, i) => {
+      const el = fx.appendChild(sheet(FX_COLORS[o.src % 4], "small", String(o.src + 1)));
+      const from = `translate(${spread(i, before.length, gap)}px,-12px)`;
+      if (o.del) {
+        el.animate([{ transform: from, opacity: 1 }, { transform: from + " translateY(36px) rotate(14deg)", opacity: 0 }], { duration: 650, delay: 250, easing: "ease-in", fill: "both" });
+      } else {
+        const j = kept.indexOf(o);
+        const to = `translate(${spread(j, kept.length, gap)}px,-12px) rotate(${o.rot || 0}deg)`;
+        el.animate([{ transform: from }, { transform: to }], { duration: 750, delay: 500, easing: EASE, fill: "both" });
+      }
+    });
+    doneLine(fx, `New PDF with ${pageWord(order.filter((o) => !o.del).length)} saved to Downloads`, 1300);
+  }
+  function showImages(panel, count) {
+    if (calm()) return;
+    const fx = stage(panel), n = Math.min(count, 5);
+    for (let i = 0; i < n; i++) {
+      const el = fx.appendChild(sheet(FX_COLORS[i % 4], "photo"));
+      const x = spread(i, n, 70);
+      el.animate([{ transform: `translate(${x}px,-12px) scale(1.15,.85)`, borderRadius: "10px" }, { transform: `translate(${x}px,-12px)`, borderRadius: "5px", offset: .45 }, { transform: `translate(${(n - 1 - i) * 3}px,${-12 - (n - 1 - i) * 3}px)` }], { duration: 1200, delay: i * 50, easing: EASE, fill: "both" });
+    }
+    doneLine(fx, `${pageWord(count)} in one PDF, saved to Downloads`, 1250);
+  }
 
   // A file dropped anywhere else must not make the browser open it in place of this page.
   const hasFiles = (e) => e.dataTransfer && [...e.dataTransfer.types].includes("Files");
@@ -244,9 +339,12 @@
 
   // ---------- Sortable lists (merge files, images)
   function renderList(ol, items, describe, onChange) {
+    flip(ol, () => renderItems(ol, items, describe, onChange));
+  }
+  function renderItems(ol, items, describe, onChange) {
     ol.replaceChildren();
     items.forEach((it, i) => {
-      const li = h("li", { class: "file", draggable: "true", "data-i": i },
+      const li = h("li", { class: "file", draggable: "true", "data-i": i, "data-key": it.id },
         h("span", { class: "n", "aria-hidden": "true", text: String(i + 1) }),
         h("span", { class: "meta" }, ...describe(it)),
         h("span", { class: "ctl" },
@@ -349,6 +447,7 @@
       const name = L.cleanName($("#merge-name").value.replace(/\.pdf$/i, ""), "merged") + ".pdf";
       download(bytes, name);
       say(`Done: ${name} (${pageWord(out.getPageCount())}, ${L.formatBytes(bytes.length)}). Check your downloads.`, "ok");
+      showMerge($("#panel-merge"), merge.items.length, out.getPageCount());
     } catch (e) {
       console.error(e);
       say(`Merging didn't work: ${e.message}`, "err");
@@ -490,6 +589,7 @@
         const name = `${base} (${label.length <= 40 ? `pages ${label}` : "selected pages"}).pdf`;
         download(bytes, name);
         say(`Done: ${name} (${pageWord(plan.indices.length)}). Check your downloads.`, "ok");
+        showSplit($("#panel-split"), 1, `${pageWord(plan.indices.length)} taken out into a new PDF`);
       } else {
         const files = [];
         for (const [a, b] of plan.pairs) {
@@ -501,6 +601,7 @@
         const zip = L.makeZip(files.map((f, i) => ({ name: names[i], bytes: f.bytes })));
         download(zip, `${base} (split).zip`, "application/zip");
         say(`Done: ${files.length} PDFs in "${base} (split).zip". Check your downloads, then open the ZIP.`, "ok");
+        showSplit($("#panel-split"), files.length, `Cut into ${files.length} PDFs, saved to Downloads as one ZIP`);
       }
     } catch (e) {
       console.error(e);
@@ -517,18 +618,27 @@
   const pagesThumbs = $("#pages-thumbs");
   const pagesGo = $("#pages-go");
   function drawPages(focus) {
+    flip(pagesThumbs, () => drawThumbs());
+    afterThumbs(focus);
+  }
+  function drawThumbs() {
     pagesThumbs.replaceChildren();
     const n = pages.order.length;
     pages.order.forEach((o, i) => {
       const label = `Page ${i + 1}${o.src !== i ? ` (was ${o.src + 1})` : ""}`;
-      const tile = h("div", { class: "thumb" + (o.del ? " deleted" : ""), draggable: "true", "data-src": o.src, role: "group", "aria-label": label + (o.del ? ", will be removed" : "") + (o.rot ? `, rotated ${o.rot}°` : "") },
-        h("span", { class: "pg" }, placeholder(o.src + 1)),
-        h("span", { class: "lbl", text: label }),
-        h("span", { class: "tools-row" },
-          h("button", { class: "icon-btn", type: "button", "data-act": "left", "aria-label": `Move page ${i + 1} earlier`, disabled: i === 0, text: "←", onclick: () => { move(pages.order, i, i - 1); drawPages({ i: i - 1, act: "left" }); } }),
-          h("button", { class: "icon-btn", type: "button", "data-act": "rot", "aria-label": `Rotate page ${i + 1} clockwise`, text: "↻", onclick: () => { o.rot = (o.rot + 90) % 360; drawPages({ i, act: "rot" }); } }),
-          h("button", { class: "icon-btn del", type: "button", "data-act": "del", "aria-label": o.del ? `Keep page ${i + 1}` : `Remove page ${i + 1}`, text: o.del ? "↺" : "✕", onclick: () => { o.del = !o.del; drawPages({ i, act: "del" }); } }),
-          h("button", { class: "icon-btn", type: "button", "data-act": "right", "aria-label": `Move page ${i + 1} later`, disabled: i === n - 1, text: "→", onclick: () => { move(pages.order, i, i + 1); drawPages({ i: i + 1, act: "right" }); } })));
+      const tile = h("div", { class: "thumb" + (o.del ? " deleted" : ""), draggable: "true", "data-src": o.src, "data-key": "p" + o.src, role: "group", "aria-label": label + (o.del ? ", will be removed" : "") + (o.rot ? `, rotated ${o.rot}°` : "") },
+        h("span", { class: "frame" },
+          h("span", { class: "pg" }, placeholder(o.src + 1)),
+          o.del ? h("span", { class: "gone", "aria-hidden": "true", text: "Removed" }) : null,
+          h("span", { class: "tools-row" },
+            h("button", { class: "icon-btn", type: "button", "data-act": "left", "aria-label": `Move page ${i + 1} earlier`, title: "Move earlier", disabled: i === 0, text: "←", onclick: () => { move(pages.order, i, i - 1); drawPages({ i: i - 1, act: "left" }); } }),
+            h("button", { class: "icon-btn", type: "button", "data-act": "rot", "aria-label": `Rotate page ${i + 1} clockwise`, title: "Turn", text: "↻", onclick: () => { o.rot = (o.rot + 90) % 360; drawPages({ i, act: "rot" }); } }),
+            h("button", { class: "icon-btn del", type: "button", "data-act": "del", "aria-label": o.del ? `Keep page ${i + 1}` : `Remove page ${i + 1}`, title: o.del ? "Keep" : "Remove", text: o.del ? "↺" : "✕", onclick: () => { o.del = !o.del; drawPages({ i, act: "del" }); } }),
+            h("button", { class: "icon-btn", type: "button", "data-act": "right", "aria-label": `Move page ${i + 1} later`, title: "Move later", disabled: i === n - 1, text: "→", onclick: () => { move(pages.order, i, i + 1); drawPages({ i: i + 1, act: "right" }); } }))),
+        h("span", { class: "cap" },
+          h("span", { class: "lbl", text: `Page ${i + 1}` }),
+          o.src !== i ? h("span", { class: "was", "aria-hidden": "true", text: `was ${o.src + 1}` }) : null,
+          o.rot ? h("span", { class: "was", "aria-hidden": "true", text: `${o.rot}°` }) : null));
       // Rotate the preview; when it turns sideways, shrink it so it still fits the tile.
       const fit = () => {
         const c = tile.querySelector("canvas");
@@ -542,6 +652,8 @@
       if (pages.view) pages.view.observe(tile);
       fit();
     });
+  }
+  function afterThumbs(focus) {
     dragSort(pagesThumbs, ".thumb", (from, to) => { move(pages.order, from, to); drawPages(); });
     const kept = pages.order.filter((o) => !o.del).length;
     pagesGo.disabled = kept === 0;
@@ -599,6 +711,7 @@
       const name = L.cleanName($("#pages-name").value.replace(/\.pdf$/i, ""), "edited") + ".pdf";
       download(bytes, name);
       say(`Done: ${name} (${pageWord(keep.length)}). Check your downloads.`, "ok");
+      showPages($("#panel-pages"), pages.order);
     } catch (e) {
       console.error(e);
       say(`Saving didn't work: ${e.message}`, "err");
@@ -710,6 +823,7 @@
       const name = L.cleanName($("#img-name").value.replace(/\.pdf$/i, ""), "images") + ".pdf";
       download(bytes, name);
       say(`Done: ${name} (${pageWord(imgs.items.length)}, ${L.formatBytes(bytes.length)}). Check your downloads.`, "ok");
+      showImages($("#panel-images"), imgs.items.length);
     } catch (e) {
       console.error(e);
       say(`Making the PDF didn't work: ${e.message}.`, "err");
