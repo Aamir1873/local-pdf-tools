@@ -1,26 +1,50 @@
 # Local PDF Tools
 
-Merge, split and organise PDFs in your browser, without uploading them anywhere.
+**Merge, split and organise PDFs on your own computer. Nothing is uploaded.**
 
-Local PDF Tools is a single HTML file. Open it from disk and it works offline in Chrome, Edge, Firefox or Safari. A Content Security Policy (`connect-src 'none'`) blocks every network request, so your files never leave your computer.
+Free PDF websites ask you to upload your files, which can include contracts, IDs or bank statements. Local PDF Tools does the same jobs without your files ever leaving your computer. It even works with Wi-Fi turned off.
+
+### [⬇ Download Local PDF Tools (free)](https://github.com/Aamir1873/local-pdf-tools/releases/latest/download/Local-PDF-Tools-v1.0.zip)
 
 ![Local PDF Tools](docs/screenshots/tool.png)
 
-## Features
+## How to use it
 
-- **Merge**: combine PDFs in the order you choose.
-- **Split**: keep selected pages, export every page, split every N pages, or define your own parts (downloaded as a ZIP).
-- **Pages**: reorder, rotate and delete pages with live previews.
-- **Images to PDF**: turn photos and scans into a PDF, with EXIF rotation, page size and margins.
-- **Guide**: how to merge and split PDFs with the tools already built into macOS, Windows, iOS, Android, ChromeOS and Linux.
+1. **Download** the file above and open it. On a Mac it unzips by itself. On Windows, right-click it and choose **Extract All**.
+2. **Double-click** `Local PDF Tools.html`. It opens in your web browser (Chrome, Edge, Firefox or Safari).
+3. **Pick a tool**, choose your files, and the new PDF is saved to your Downloads folder.
 
-![Pages view](docs/screenshots/pages.png)
+There's nothing to install and no account to make.
 
-## Download
+## What it can do
 
-Get `Local-PDF-Tools-v1.0.zip` from [Releases](../../releases), unzip it and double-click `Local PDF Tools.html`.
+- **Merge**: join several PDFs into one, in the order you choose.
+- **Split**: take out the pages you need, or cut a PDF into parts.
+- **Pages**: move, turn or delete pages, with a preview of each one.
+- **Images to PDF**: turn photos or scans into a PDF.
 
-## Build from source
+![Moving and turning pages](docs/screenshots/pages.png)
+
+The download also has a short guide (PDF) on doing the same with the tools already on your Mac, Windows PC, iPhone, iPad, Android phone, Chromebook or Linux computer.
+
+## Keep it one click away
+
+- Move `Local PDF Tools.html` from Downloads to your Documents folder first.
+- **Mac**: drag it to the Dock, next to the Trash.
+- **Windows**: right-click it, then **Show more options › Send to › Desktop (create shortcut)**.
+- **Any computer**: open it and press **Ctrl + D** (**Command + D** on a Mac) to bookmark it.
+
+## Questions or problems
+
+[Open an issue](https://github.com/Aamir1873/local-pdf-tools/issues) and describe what happened.
+
+---
+
+## For developers
+
+The whole tool is one HTML file with [pdf-lib](https://github.com/Hopding/pdf-lib) and [PDF.js](https://github.com/mozilla/pdf.js) built in. A Content Security Policy (`connect-src 'none'`) blocks every network request.
+
+### Build from source
 
 Requires Node.js 22+ and Google Chrome.
 
@@ -33,7 +57,7 @@ npm run release   # build, print the guide to PDF, take screenshots, zip
 
 Set `CHROME` if Chrome isn't at the default macOS path.
 
-## How it works
+### How it works
 
 `src/build.mjs` inlines [pdf-lib](https://github.com/Hopding/pdf-lib) and [PDF.js](https://github.com/mozilla/pdf.js) into one HTML file with the app (`src/app`) and the guide (`src/content`). The tests (`src/test/run.mjs`) open the built file from disk in headless Chrome through the DevTools protocol (`lib/cdp.mjs`), use every tool, and check each download with pdf-lib and `unzip -t`. See [the test report](src/test/TEST-REPORT.md).
 
