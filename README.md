@@ -6,7 +6,10 @@ Free PDF websites ask you to upload your files, which can include contracts, IDs
 
 ### [⬇ Download Local PDF Tools (free)](https://github.com/Aamir1873/local-pdf-tools/releases/latest/download/Local-PDF-Tools-v1.0.zip)
 
-![Local PDF Tools](docs/screenshots/tool.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/tool-dark.png">
+  <img src="docs/screenshots/tool.png" alt="Local PDF Tools: the four tools as tiles under the title">
+</picture>
 
 ## How to use it
 
@@ -24,6 +27,11 @@ There's nothing to install and no account to make.
 - **Images to PDF**: turn photos or scans into a PDF, one page per image.
 
 After each job, a short animation shows what happened: the files joining into one, a PDF splitting into parts, or the pages moving into their new order. It follows your computer's light or dark setting, and the animations switch off if you've turned motion off.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/merge-dark.png">
+  <img src="docs/screenshots/merge.png" alt="Three PDFs merged into one, with the result shown under the list">
+</picture>
 
 ![Moving and turning pages](docs/screenshots/pages.png)
 
