@@ -1,0 +1,24 @@
+Local PDF Tools: licence
+Version 1.0, October 2026
+
+Local PDF Tools is free.
+
+You may:
+- use it at home, at work and for clients, as often as you like;
+- share the unchanged files with anyone: colleagues, friends, your whole company, a class.
+
+You may not:
+- sell it, or include it in a product you sell;
+- change it and share the changed version under the same name.
+
+Third-party software included:
+- pdf-lib, MIT licence (licenses folder)
+- PDF.js (Mozilla), Apache License 2.0 (licenses folder)
+
+Local PDF Tools runs entirely in your web browser. Your files are not uploaded. The page blocks all network connections with a Content Security Policy.
+
+The guide describes features of Apple, Microsoft, Google and Linux tools as checked in October 2026. Those names belong to their owners, and this guide isn't affiliated with any of them. Menus change between versions.
+
+Provided "as is", without any warranty. Always keep your original file until you've checked the new one. Nothing here is legal advice.
+
+Source: https://github.com/Aamir1873/local-pdf-tools

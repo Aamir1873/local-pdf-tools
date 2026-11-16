@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Keep your PDFs off random websites</title>
+<style>
+%%STYLE%%
+/* Print layout for the guide */
+@page { size: A4; margin: 14mm 14mm 16mm; }
+html, body { background: #fff !important; color: #1f1f1d !important; }
+body { font-size: 11.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+:root { --paper: #f6f4ec; --card: #fff; --ink: #121212; --ink-2: #2a2a27; --muted: #4f4e48; --line: #d9d5c8; --safe: #0b6b37; --safe-bg: #e2f3e8; --danger: #b3140b; }
+.wrap { width: auto; }
+.cover { background: #121212; color: #f6f4ec; border-radius: 10px; padding: 22px 24px 20px; margin-bottom: 10px; }
+.cover .eyebrow { color: #ffd400; margin-bottom: 8px; }
+.cover h1 { color: #fff; font-size: 30pt; font-weight: 850; letter-spacing: -0.03em; line-height: 1.05; }
+.cover p { color: #d8d6cc; margin: 10px 0 0; font-size: 12pt; max-width: 640px; }
+.hazard { margin: 0 0 6px; height: 10px; }
+.guide { padding: 0; }
+.guide-block { padding: 14px 0 16px; break-inside: auto; }
+.guide-block h2 { font-size: 19pt; }
+.guide-block .lead { font-size: 11.5pt; margin: 6px 0 12px; }
+.cards.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.card, .device, .checklist li { break-inside: avoid; }
+.card { padding: 12px; }
+.card h3 { font-size: 12pt; }
+.card p, .steps ol, .steps p, .checklist li { font-size: 10.5pt; }
+.device > h3 { font-size: 12.5pt; padding: 9px 14px; }
+.steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.steps > div { padding: 10px 14px; border-right: 1.5px solid var(--line); border-bottom: 0; }
+.checklist { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+#builtin { break-before: page; }
+#check { break-before: page; }
+.endnote { margin-top: 16px; font-size: 9.5pt; color: #4f4e48; border-top: 1.5px solid var(--line); padding-top: 10px; }
+</style>
+</head>
+<body>
+<div class="cover">
+  <p class="eyebrow">Free guide · Local PDF Tools</p>
+  <h1>Keep your PDFs off random websites</h1>
+  <p>Why uploading PDFs to free merge and split sites is risky, how to do the same jobs with the tools already on your Mac, PC, phone or tablet, and what to do if you've already uploaded something.</p>
+</div>
+<div class="hazard" aria-hidden="true"></div>
+<div class="guide">
+%%GUIDE%%
+</div>
+<p class="endnote">Local PDF Tools v%%VERSION%% · github.com/Aamir1873/local-pdf-tools · Free to share unchanged. Menu names can change between system versions. General information, not legal advice.</p>
+</body>
+</html>

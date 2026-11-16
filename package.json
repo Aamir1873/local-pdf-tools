@@ -1,0 +1,16 @@
+{
+  "name": "local-pdf-tools",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Merge, split and organise PDFs in one offline HTML file. Nothing is uploaded.",
+  "scripts": {
+    "build": "node src/build.mjs",
+    "test": "node src/test/run.mjs",
+    "release": "sh src/package.sh"
+  },
+  "dependencies": {
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "6.3.289"
+  }
+}
