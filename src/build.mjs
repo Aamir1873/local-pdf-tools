@@ -12,9 +12,11 @@ const MODULES = join(KIT, "node_modules");
 const OUT = join(KIT, "release", "files");
 const read = (p) => readFileSync(p, "utf8");
 
-const pdfLib = read(join(MODULES, "pdf-lib", "dist", "pdf-lib.min.js"));
-const pdfjsLib = readFileSync(join(MODULES, "pdfjs-dist", "legacy", "build", "pdf.min.mjs"));
-const pdfjsWorker = readFileSync(join(MODULES, "pdfjs-dist", "legacy", "build", "pdf.worker.min.mjs"));
+// Drop source map notes: the page can't load .map files (and shouldn't try), so browsers would log errors.
+const noMap = (code) => code.replace(/\n?\/\/[#@] sourceMappingURL=\S+\s*$/gm, "");
+const pdfLib = noMap(read(join(MODULES, "pdf-lib", "dist", "pdf-lib.min.js")));
+const pdfjsLib = Buffer.from(noMap(read(join(MODULES, "pdfjs-dist", "legacy", "build", "pdf.min.mjs"))));
+const pdfjsWorker = Buffer.from(noMap(read(join(MODULES, "pdfjs-dist", "legacy", "build", "pdf.worker.min.mjs"))));
 const pdfjsVersion = JSON.parse(read(join(MODULES, "pdfjs-dist", "package.json"))).version;
 const pdfLibVersion = JSON.parse(read(join(MODULES, "pdf-lib", "package.json"))).version;
 if (/<\/script/i.test(pdfLib)) throw new Error("pdf-lib contains </script and can't be inlined as is");
@@ -53,6 +55,7 @@ for (const [name, text] of [["Local PDF Tools.html", app], ["guide-print.html", 
   if (/%%[A-Z_]+%%/.test(shell)) throw new Error(`${name}: unreplaced placeholder`);
 }
 if (!/Content-Security-Policy[^>]*connect-src 'none'/.test(app)) throw new Error("CSP with connect-src 'none' is missing");
+if (/sourceMappingURL/.test(app)) throw new Error("A source map note is left in the page");
 const files = [];
 const walk = (d) => readdirSync(d).forEach((f) => (statSync(join(d, f)).isDirectory() ? walk(join(d, f)) : files.push(join(d, f))));
 walk(OUT);
