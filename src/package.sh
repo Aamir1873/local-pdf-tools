@@ -21,8 +21,8 @@ node "$KIT/lib/shot.mjs" "$APP#sample" "$PREVIEWS/pages.png" 1180 1250 --wait "d
 node "$KIT/lib/shot.mjs" "$APP#why" "$PREVIEWS/guide.png" 1180 1300
 
 cd "$KIT/release"
-rm -rf "Local PDF Tools" Local-PDF-Tools-v1.0.zip
+rm -rf "Local PDF Tools" Local-PDF-Tools-v1.1.zip
 cp -R files "Local PDF Tools"
-zip -rqX Local-PDF-Tools-v1.0.zip "Local PDF Tools"
+zip -rqX Local-PDF-Tools-v1.1.zip "Local PDF Tools"
 rm -rf "Local PDF Tools"
-echo "Release: $KIT/release/Local-PDF-Tools-v1.0.zip ($(du -h Local-PDF-Tools-v1.0.zip | cut -f1))"
+echo "Release: $KIT/release/Local-PDF-Tools-v1.1.zip ($(du -h Local-PDF-Tools-v1.1.zip | cut -f1))"

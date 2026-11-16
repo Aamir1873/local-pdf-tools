@@ -4,7 +4,7 @@
 
 Free PDF websites ask you to upload your files, which can include contracts, IDs or bank statements. Local PDF Tools does the same jobs without your files ever leaving your computer. It even works with Wi-Fi turned off.
 
-### [⬇ Download Local PDF Tools (free)](https://github.com/Aamir1873/local-pdf-tools/releases/latest/download/Local-PDF-Tools-v1.0.zip)
+### [⬇ Download Local PDF Tools (free)](https://github.com/Aamir1873/local-pdf-tools/releases/latest/download/Local-PDF-Tools-v1.1.zip)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/tool-dark.png">

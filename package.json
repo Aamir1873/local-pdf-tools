@@ -1,6 +1,6 @@
 {
   "name": "local-pdf-tools",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "type": "module",
   "description": "Merge, split and organise PDFs in one offline HTML file. Nothing is uploaded.",

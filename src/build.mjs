@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync, copyFileSync, readdirSy
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const VERSION = "1.0";
+const VERSION = "1.1";
 const SRC = dirname(fileURLToPath(import.meta.url));
 const KIT = dirname(SRC);
 const MODULES = join(KIT, "node_modules");
