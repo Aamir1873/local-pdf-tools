@@ -10,7 +10,7 @@ Free PDF websites ask you to upload your files, which can include contracts, IDs
 
 ## How to use it
 
-1. **Download** the file above and open it. On a Mac it unzips by itself. On Windows, right-click it and choose **Extract All**.
+1. **Download** the file above and open it. On a Mac, double-click it to unzip. On Windows, right-click it and choose **Extract All**.
 2. **Double-click** `Local PDF Tools.html`. It opens in your web browser (Chrome, Edge, Firefox or Safari).
 3. **Pick a tool**, choose your files, and the new PDF is saved to your Downloads folder.
 
